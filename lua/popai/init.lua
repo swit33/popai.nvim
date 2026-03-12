@@ -63,21 +63,40 @@ function M.popai(action_name, is_visual)
 		vim.notify("PopAI: Unknown action '" .. action_name .. "', using translate_ch.", vim.log.levels.INFO)
 	end
 
-	local full_prompt = ""
-	if template:find("{input}") then
-		full_prompt = template:gsub("{input}", function()
-			return text
-		end)
-	else
-		full_prompt = template .. text
+	local execute = function(full_template)
+		local full_prompt = ""
+		if full_template:find("{input}") then
+			full_prompt = full_template:gsub("{input}", function()
+				return text
+			end)
+		else
+			full_prompt = full_template .. text
+		end
+
+		-- Open UI
+		ui.create_window()
+		ui.show_loading()
+
+		-- Call API
+		api.request(full_prompt)
 	end
 
-	-- Open UI
-	ui.create_window()
-	ui.show_loading()
-
-	-- Call API
-	api.request(full_prompt)
+	if action_name == "ask" then
+		vim.ui.input({ prompt = "AI Question: " }, function(input)
+			if input and input ~= "" then
+				if template:find("{user_prompt}") then
+					template = template:gsub("{user_prompt}", function()
+						return input
+					end)
+				else
+					template = template .. input
+				end
+				execute(template)
+			end
+		end)
+	else
+		execute(template)
+	end
 end
 
 return M

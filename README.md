@@ -10,6 +10,7 @@ A Neovim plugin that sends text under cursor or visual selection to Ollama or Op
 - 🔄 Works in **Normal mode** (word under cursor) and **Visual mode** (selected text)
 - 📝 **Customizable prompts** for different actions (translate, explain, refactor, etc.)
 - ⏳ Built-in **loading indicator**
+- 🖊️ User input for **custom prompts**
 
 ## 🎬 Demo
 
@@ -149,6 +150,21 @@ require("popai").setup({
     custom_task = "Task: Process the following content: {input}\n\nRequirements: ...",
   },
 })
+
+```
+
+### Example: Using custom prompts
+
+You can use the "ask" template to ask the user for instructions. This will open vim.ui.input() and wait for the user to input the instructions.
+You can also use the {user_prompt} placeholder to insert the user input at a specific position in the prompt.
+If {user_prompt} is not present, the user input will be appended to the end of the template, before the selected text.
+
+```lua
+require("popai").setup({
+  prompts = {
+    ask =
+      "You will be shown a piece of code, and then some instructions. Follow the instructions. \n CODE: {input} \n INSTRUCTIONS: {user_prompt}",
+  }
 ```
 
 ## 🚀 Usage
@@ -162,6 +178,7 @@ require("popai").setup({
 | `:Popai regex_explain` | Explain regex |
 | `:Popai shell_explain` | Explain shell command |
 | `:Popai cron_explain` | Explain cron expression |
+| `:Popai ask` | Ask user for instructions |
 | `:Popai <custom>` | Run any custom prompt you defined |
 
 ### Workflow
